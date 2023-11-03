@@ -29,7 +29,7 @@ app.post("/", (req, res) => {
   };
 
   quotes.push(newQuote);
-  fs.writeFileSync("./data/quotes.json", JSON.stringify(quotes));
+  fs.writeFileSync("./data/video-details.json", JSON.stringify(quotes));
   res.send("made it to server");
   // console.log(newQuote);
 });
@@ -37,7 +37,7 @@ app.post("/", (req, res) => {
 //get quotes by author
 
 app.get("/:author", (req, res) => {
-  const quotes = JSON.parse(fs.readFileSync("./data/quotes.json"));
+  const quotes = JSON.parse(fs.readFileSync("./data/video-details.json"));
   const foundQuote = quotes.find((quote) => quote.a === req.params.author);
   if (foundQuote) {
     res.send(foundQuote);
