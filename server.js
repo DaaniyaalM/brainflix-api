@@ -5,47 +5,47 @@ const fs = require("fs");
 
 const PORT = 8080;
 
-//Middleware
-//-----------------------------
 app.use(express.json());
-app.use(express.static("public/images"));
+app.use(express.static("public"));
 app.use(cors());
 
-//Getting quotes
+const data = JSON.parse(fs.readFileSync("./data/video-details.json"));
 
-app.get("/", (_req, res) => {
-  const quotes = JSON.parse(fs.readFileSync("./data/video-details.json"));
-  res.send(quotes[Math.floor(Math.random() * quotes.length)]);
-});
-
-app.post("/", (req, res) => {
-  const quotes = JSON.parse(fs.readFileSync("./data/quotes.json"));
-
-  const newQuote = {
-    q: req.body.q,
-    a: req.body.a,
-    c: "randomnumebr",
-    h: "randomblockquote",
+app.post("/upload", (req, res) => {
+  const newVideo = {
+    title: req.body.title,
+    description: req.body.description,
+    thumbnail: req.body.thumbnail, // Use the 'thumbnail' field from the form
   };
 
-  quotes.push(newQuote);
-  fs.writeFileSync("./data/quotes.json", JSON.stringify(quotes));
-  res.send("made it to server");
-  // console.log(newQuote);
+  data.push(newVideo);
+
+  fs.writeFileSync("./data/videos.json", JSON.stringify(data, null, 2));
+
+  res.send("Video added successfully");
 });
 
-//get quotes by author
+app.get("/videos/:id", (req, res) => {
+  console.log("Requested ID:", req.params.id);
 
-app.get("/:author", (req, res) => {
-  const quotes = JSON.parse(fs.readFileSync("./data/quotes.json"));
-  const foundQuote = quotes.find((quote) => quote.a === req.params.author);
-  if (foundQuote) {
-    res.send(foundQuote);
+  const video = data.find((item) => {
+    console.log(item.id === req.params.id);
+    return String(item.id) === String(req.params.id);
+  });
+  if (video) {
+    res.send(video);
   } else {
-    res.status(400).send("quote not found");
+    res.status(404).send("Video not found");
   }
 });
 
 app.listen(PORT, () => {
-  console.log(`listening on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
+});
+
+app.get("/video", (req, res) => {
+  console.log("video");
+  const video = JSON.parse(fs.readFileSync("./data/videos.json"));
+
+  res.send(video);
 });
