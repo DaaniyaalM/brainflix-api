@@ -15,7 +15,7 @@ app.post("/upload", (req, res) => {
   const newVideo = {
     title: req.body.title,
     description: req.body.description,
-    thumbnail: req.body.thumbnail, // Use the 'thumbnail' field from the form
+    thumbnail: req.body.thumbnail,
   };
 
   data.push(newVideo);
